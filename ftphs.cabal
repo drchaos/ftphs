@@ -42,9 +42,9 @@ Library
     Network.FTP.Server.Parser
   Extensions: ExistentialQuantification, OverlappingInstances, 
    UndecidableInstances, CPP, ScopedTypeVariables
-  Build-Depends: network, parsec, base >= 3 && < 5,
-                 mtl, regex-compat, 
-               hslogger, MissingH>=1.0.0, bytestring
+  Build-Depends: network >= 3.1, parsec, base >= 3 && < 5,
+                 mtl, regex-compat, network-bsd, time,
+                 hslogger, MissingH>=1.0.0, bytestring
   GHC-Options: -O2
 
 Executable runtests

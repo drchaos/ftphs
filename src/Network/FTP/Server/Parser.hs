@@ -44,7 +44,7 @@ import Data.List.Utils
 import Data.Bits.Utils
 import Data.String.Utils
 import System.Log.Logger
-import Network.Socket(SockAddr(..), PortNumber(..), inet_addr, inet_ntoa)
+import Network.Socket(SockAddr(..), PortNumber(..))
 import System.IO(Handle, hGetContents)
 import System.IO(hGetLine)
 import Text.Regex
