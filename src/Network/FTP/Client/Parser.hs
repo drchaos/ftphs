@@ -51,7 +51,7 @@ import Data.List.Utils
 import Data.Bits.Utils
 import Data.String.Utils
 import System.Log.Logger
-import Network.Socket(SockAddr(..), PortNumber(..), inet_addr, inet_ntoa)
+import Network.Socket
 import System.IO(Handle, hGetContents)
 import System.IO.Unsafe
 import Text.Regex
@@ -213,10 +213,10 @@ Example:
 >                              "170,187,204,221,18,52"
 -}
 toPortString :: SockAddr -> IO String
-toPortString (SockAddrInet port hostaddr) =
+toPortString sa@(SockAddrInet port hostaddr) =
     let wport = (fromIntegral (port))::Word16
         in do
-           hn <- inet_ntoa hostaddr
+           (Just hn,_) <- getNameInfo [NI_NUMERICHOST, NI_NUMERICSERV] True False sa
            return ((replace "." "," hn) ++ "," ++
                    (genericJoin "," . getBytes $ wport))
 toPortString _ =
@@ -227,11 +227,12 @@ fromPortString :: String -> IO SockAddr
 fromPortString instr =
     let inbytes = split "," instr
         hostname = join "." (take 4 inbytes)
-        portbytes = map read (drop 4 inbytes)
+        portbytes = fromBytes @Int $ map read (drop 4 inbytes)
+        hints = defaultHints { addrFamily = AF_INET }
         in
         do
-        addr <- inet_addr hostname
-        return $ SockAddrInet (fromInteger $ fromBytes portbytes) addr
+        addr:_ <- getAddrInfo (Just hints) (Just hostname) (Just $ show portbytes)
+        return $ addrAddress addr
 
 respToSockAddrRe = mkRegex("([0-9]+,){5}[0-9]+")
 -- | Converts a response code to a socket address
@@ -249,8 +250,8 @@ respToSockAddr f =
 parseDirName :: FTPResult -> Maybe String
 parseDirName (257, name:_) =
     let procq [] = []
-        procq ('"':_) = []
         procq ('"' : '"' : xs) = '"' : procq xs
+        procq ('"':_) = []
         procq (x:xs) = x : procq xs
         in
         if head name /= '"'

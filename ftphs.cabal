@@ -40,11 +40,11 @@ Library
     Network.FTP.Client.Parser,
     Network.FTP.Server,
     Network.FTP.Server.Parser
-  Extensions: ExistentialQuantification, OverlappingInstances, 
+  Extensions: ExistentialQuantification, TypeApplications, 
    UndecidableInstances, CPP, ScopedTypeVariables
-  Build-Depends: network, parsec, base >= 3 && < 5,
-                 mtl, regex-compat, 
-               hslogger, MissingH>=1.0.0, bytestring
+  Build-Depends: network >= 3.1, parsec, base >= 3 && < 5,
+                 mtl, regex-compat, network-bsd, time,
+                 hslogger, MissingH>=1.0.0, bytestring
   GHC-Options: -O2
 
 Executable runtests
@@ -54,7 +54,7 @@ Executable runtests
   else
     Buildable: False
   Main-Is: runtests.hs
-  Other-Modules: Tests, Network.FTP.Parsertest
+  Other-Modules: Tests, Network.FTP.Parsertest, Network.FTP.Client.Parser
   HS-Source-Dirs: testsrc, src, .
-  Extensions: ExistentialQuantification, OverlappingInstances,
+  Extensions: ExistentialQuantification, TypeApplications, 
     UndecidableInstances, CPP
